@@ -17,11 +17,92 @@ compress-env is a lightweight tool for securely compressing, encoding, and manag
 - **Simple Restoration**: Easily restore .env files to their original locations
 - **Password Protection**: Add an extra layer of security with password-based encryption
 
+## Installation
 
+### Option 1: Download and Install Pre-built Binary
 
-## Download pre-built binary
+1. Download the pre-built binary from the [Release page](https://github.com/cavaldos/compress-env/releases).
 
-You can download pre-built binary from [Release page](https://github.com/cavaldos/compress-env/releases).
+2. Make the binary executable:
+   ```bash
+   chmod +x compress-env
+   ```
+
+3. Move the binary to a directory in your system PATH:
+
+   **For Linux/macOS:**
+   ```bash
+   # Move to /usr/local/bin (requires sudo)
+   sudo mv compress-env /usr/local/bin/
+
+   # Or move to ~/.local/bin (doesn't require sudo)
+   mkdir -p ~/.local/bin
+   mv compress-env ~/.local/bin/
+
+   # Make sure ~/.local/bin is in your PATH
+   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
+   # Or if you use zsh
+   echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc
+   ```
+
+   **For Windows:**
+   ```powershell
+   # Create a directory for binaries if it doesn't exist
+   mkdir -p $env:USERPROFILE\bin
+
+   # Move the binary
+   move compress-env.exe $env:USERPROFILE\bin\
+
+   # Add to PATH (run in PowerShell as Administrator)
+   [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:USERPROFILE\bin", "User")
+   ```
+
+4. Verify the installation:
+   ```bash
+   compress-env --version
+   ```
+
+### Option 2: Build from Source
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/cavaldos/compress-env.git
+   cd compress-env
+   ```
+
+2. Build the release version:
+   ```bash
+   cargo build --release
+   ```
+
+3. Move the binary to a directory in your system PATH:
+
+   **For Linux/macOS:**
+   ```bash
+   # Move to /usr/local/bin (requires sudo)
+   sudo cp target/release/compress-env /usr/local/bin/
+
+   # Or move to ~/.local/bin (doesn't require sudo)
+   mkdir -p ~/.local/bin
+   cp target/release/compress-env ~/.local/bin/
+   ```
+
+   **For Windows:**
+   ```powershell
+   # Create a directory for binaries if it doesn't exist
+   mkdir -p $env:USERPROFILE\bin
+
+   # Copy the binary
+   copy target\release\compress-env.exe $env:USERPROFILE\bin\
+
+   # Add to PATH (run in PowerShell as Administrator)
+   [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:USERPROFILE\bin", "User")
+   ```
+
+4. Verify the installation:
+   ```bash
+   compress-env --version
+   ```
 
 ## Usage
 
@@ -78,19 +159,7 @@ compress-env restore -i secrets.bin -p mypassword
 
 When using the password option (`-p`), compress-env applies a simple but effective encryption to your environment variables. This adds an extra layer of protection for sensitive information like API keys, database credentials, and other secrets.
 
-## Building from Source
 
-```bash
-# Clone the repository
-git clone https://github.com/cavaldos/compress-env.git
-cd compress-env
-
-# Build the release version
-cargo build --release
-
-# The executable will be available at
-./target/release/compress-env
-```
 
 ## Tips
 
