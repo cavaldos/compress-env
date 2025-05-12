@@ -2,6 +2,14 @@
 name = "compress-env"
 version = "0.1.0"
 edition = "2024"
+authors = ["Nguyễn Ngọc Khánh <cavaldos>"]
+description = "A lightweight tool for securely compressing, encoding, and managing .env files"
+readme = "README.md"
+homepage = "https://github.com/cavaldos/compress-env"
+repository = "https://github.com/cavaldos/compress-env"
+license = "MIT"
+keywords = ["env", "environment", "dotenv", "security", "compression"]
+categories = ["command-line-utilities", "cryptography", "development-tools"]
 
 [dependencies]
 aes-gcm = "0.10.3"

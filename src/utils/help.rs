@@ -15,3 +15,10 @@ pub fn print_usage() {
     println!("  compress-env compress -f ./project1/.env -o project1-secrets.bin -p mypassword");
     println!("  compress-env restore -i secrets.bin -p mypassword");
 }
+
+pub fn print_version() {
+    println!("compress-env v{}", env!("CARGO_PKG_VERSION"));
+    println!("A lightweight tool for securely compressing, encoding, and managing .env files");
+    println!("Copyright (c) 2025 Nguyễn Ngọc Khánh");
+    println!("License: MIT");
+}

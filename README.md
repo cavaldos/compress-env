@@ -1,13 +1,64 @@
-# compress-env
+<div align="center">
 
-[![GitHub Actions](https://github.com/hatoo/oha/workflows/CI/badge.svg)](https://github.com/hatoo/oha/actions?query=workflow%3ACI)
-[![Crates.io](https://img.shields.io/crates/v/oha.svg)](https://crates.io/crates/oha)
-[![Arch Linux](https://img.shields.io/archlinux/v/extra/x86_64/oha)](https://archlinux.org/packages/extra/x86_64/oha/)
-[![Homebrew](https://img.shields.io/homebrew/v/oha)](https://formulae.brew.sh/formula/oha)
+# 🔐 compress-env
 
-compress-env is a lightweight tool for securely compressing, encoding, and managing .env files in your projects. It allows you to easily backup and restore environment variables across different environments while maintaining their directory structure.
+**Secure .env File Management Made Simple**
 
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/cavaldos/compress-env)](https://github.com/cavaldos/compress-env/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![GitHub stars](https://img.shields.io/github/stars/cavaldos/compress-env?style=social)](https://github.com/cavaldos/compress-env/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/cavaldos/compress-env)](https://github.com/cavaldos/compress-env/issues)
 
+<p align="center">
+  <i>A lightweight Rust tool for securely compressing, encoding, and managing .env files in your projects</i>
+</p>
+
+</div>
+
+## 📋 Table of Contents
+
+- [Features](#features)
+- [Why compress-env?](#why-compress-env)
+- [Quick Start](#quick-start)
+- [Installation](#installation)
+- [Uninstallation](#uninstallation)
+- [Usage](#usage)
+- [How it Works](#how-it-works)
+- [Security](#security)
+- [Tips](#tips)
+- [License](#license)
+- [Contributing](#contributing)
+- [Contact & Support](#contact--support)
+
+## Why compress-env?
+
+Managing environment variables across different development environments, staging servers, and production deployments can be challenging. compress-env solves this problem by:
+
+- **Simplifying backup and restoration** of .env files with a single command
+- **Enhancing security** with optional password-based encryption
+- **Preserving directory structures** when working with complex projects
+- **Reducing the risk of exposing sensitive credentials** in your version control system
+- **Working seamlessly** across different operating systems
+
+Whether you're a solo developer or part of a team, compress-env helps you manage your environment variables efficiently and securely.
+
+## Quick Start
+
+```bash
+# Install compress-env
+curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env -o compress-env
+chmod +x compress-env
+sudo mv compress-env /usr/local/bin/
+
+# Compress all .env files in your project
+compress-env compress
+
+# Compress with password protection
+compress-env compress -p mySecretPassword
+
+# Restore your .env files
+compress-env restore
+```
 
 ## Features
 
@@ -21,7 +72,25 @@ compress-env is a lightweight tool for securely compressing, encoding, and manag
 
 ### Option 1: Download and Install Pre-built Binary
 
-1. Download the pre-built binary from the [Release page](https://github.com/cavaldos/compress-env/releases).
+1. Download the pre-built binary from the [Release page](https://github.com/cavaldos/compress-env/releases) or use curl:
+
+   **For Linux/macOS:**
+   ```bash
+   # Download the latest release
+   curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env -o compress-env
+
+   # Or specify a version (replace v0.1.0 with the desired version)
+   # curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env -o compress-env
+   ```
+
+   **For Windows (using PowerShell):**
+   ```powershell
+   # Download the latest release
+   curl.exe -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env.exe -o compress-env.exe
+
+   # Or specify a version (replace v0.1.0 with the desired version)
+   # curl.exe -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env.exe -o compress-env.exe
+   ```
 
 2. Make the binary executable:
    ```bash
@@ -103,6 +172,34 @@ compress-env is a lightweight tool for securely compressing, encoding, and manag
    ```bash
    compress-env --version
    ```
+
+## Uninstallation
+
+### For Linux/macOS:
+
+1. If you installed the binary to `/usr/local/bin`:
+   ```bash
+   sudo rm /usr/local/bin/compress-env
+   ```
+
+2. If you installed the binary to `~/.local/bin`:
+   ```bash
+   rm ~/.local/bin/compress-env
+   ```
+
+### For Windows:
+
+1. If you installed the binary to your user bin directory:
+   ```powershell
+   # Remove the binary
+   Remove-Item $env:USERPROFILE\bin\compress-env.exe
+   ```
+
+2. Verify the uninstallation:
+   ```bash
+   compress-env --version
+   ```
+   If the uninstallation was successful, you should see a "command not found" error.
 
 ## Usage
 
@@ -200,3 +297,16 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 3. Commit your changes (`git commit -m 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
+
+## Contact & Support
+
+- **GitHub**: [github.com/cavaldos/compress-env](https://github.com/cavaldos/compress-env)
+- **Author**: [Nguyễn Ngọc Khánh](https://github.com/cavaldos)
+- **Report Issues**: [Submit an Issue](https://github.com/cavaldos/compress-env/issues)
+- **Feature Requests**: [Submit a Feature Request](https://github.com/cavaldos/compress-env/issues/new)
+
+### ⭐ Star the Project
+
+If you find compress-env useful, please consider giving it a star on GitHub! It helps make the project more visible and encourages continued development.
+
+[![Star on GitHub](https://img.shields.io/github/stars/cavaldos/compress-env?style=social)](https://github.com/cavaldos/compress-env/stargazers)

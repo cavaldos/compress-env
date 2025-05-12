@@ -2,7 +2,7 @@ mod utils;
 use std::env;
 use utils::compress::compress_env_files;
 use utils::restore::restore_env_files;
-use utils::help::print_usage;
+use utils::help::{print_usage, print_version};
 
 // Define the default filename as a constant
 pub const DEFAULT_ENV_FILE: &str = ".env.bin";
@@ -16,6 +16,12 @@ fn main() -> std::io::Result<()> {
     }
 
     match args[1].as_str() {
+        "-v" | "--version" => {
+            print_version();
+        },
+        "-h" | "--help" => {
+            print_usage();
+        },
         "compress" => {
             println!("Compressing and encoding .env files...");
 
