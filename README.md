@@ -46,7 +46,8 @@ Whether you're a solo developer or part of a team, compress-env helps you manage
 
 ```bash
 # Install compress-env
-curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env -o compress-env
+curl -L https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-v0.1.1-macos.tar.gz -o compress-env.tar.gz
+tar -xzf compress-env.tar.gz
 chmod +x compress-env
 sudo mv compress-env /usr/local/bin/
 
@@ -77,19 +78,21 @@ compress-env restore
    **For Linux/macOS:**
    ```bash
    # Download the latest release
-   curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env -o compress-env
+   curl -L https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-v0.1.1-macos.tar.gz -o compress-env.tar.gz
+   tar -xzf compress-env.tar.gz
 
-   # Or specify a version (replace v0.1.0 with the desired version)
-   # curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env -o compress-env
+   # Or specify a version (replace v0.1.1 with the desired version)
+   # curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compress-env-v0.1.1-macos.tar.gz -o compress-env.tar.gz
    ```
 
    **For Windows (using PowerShell):**
    ```powershell
    # Download the latest release
-   curl.exe -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env.exe -o compress-env.exe
+   curl.exe -L https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-v0.1.1-windows.zip -o compress-env.zip
+   Expand-Archive -Path compress-env.zip -DestinationPath .
 
-   # Or specify a version (replace v0.1.0 with the desired version)
-   # curl.exe -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env.exe -o compress-env.exe
+   # Or specify a version (replace v0.1.1 with the desired version)
+   # curl.exe -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compress-env-v0.1.1-windows.zip -o compress-env.zip
    ```
 
 2. Make the binary executable:
