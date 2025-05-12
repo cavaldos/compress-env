@@ -3,9 +3,10 @@ use std::io::{self, BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 
 
-pub fn restore_env_files() -> io::Result<()> {
+pub fn restore_env_files(input_file_name: Option<&str>) -> io::Result<()> {
     let current_dir = std::env::current_dir()?;
-    let input_file_path = current_dir.join("env_contents.txt");
+    let filename = input_file_name.unwrap_or(crate::DEFAULT_ENV_FILE);
+    let input_file_path = current_dir.join(filename);
     
     println!("Reading from: {}", input_file_path.display());
     
