@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 use crate::utils::hash::encode::encode_content;
 
 
-pub fn compress_env_files(output_file_name: Option<&str>, specific_files: Option<Vec<&str>>) -> io::Result<()> {
+pub fn compress_env_files(output_file_name: Option<&str>, specific_files: Option<Vec<&str>>, password: Option<&str>) -> io::Result<()> {
     let current_dir = std::env::current_dir()?;
     let filename = output_file_name.unwrap_or(crate::DEFAULT_ENV_FILE);
     let output_file_path = current_dir.join(filename);
@@ -33,7 +33,7 @@ pub fn compress_env_files(output_file_name: Option<&str>, specific_files: Option
     };
 
     // Encode the content before writing to file
-    let encoded_content = encode_content(&aggregated_content);
+    let encoded_content = encode_content(&aggregated_content, password);
 
     // Write the encoded content to the output file
     output_file.write_all(&encoded_content)?;

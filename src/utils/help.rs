@@ -7,11 +7,11 @@ pub fn print_usage() {
     println!("  -o <filename>     - Specify the output filename for compression (default: {})", crate::DEFAULT_ENV_FILE);
     println!("  -i <filename>     - Specify the input filename for restoration (default: {})", crate::DEFAULT_ENV_FILE);
     println!("  -f <file1> <file2> ... - Specify specific .env files to compress");
+    println!("  -p <password>     - Specify a password for encryption/decryption (optional)");
     println!("  -h, --help        - Show this help message");
     println!("  -v, --version     - Show version information");
     println!("Examples:");
     println!("  compress-env compress -o secrets.bin");
-    println!("  compress-env compress -f ./project1/.env ./project2/.env");
-    println!("  compress-env compress -f ./project1/.env -o project1-secrets.bin");
-    println!("  compress-env restore -i secrets.bin");
+    println!("  compress-env compress -f ./project1/.env -o project1-secrets.bin -p mypassword");
+    println!("  compress-env restore -i secrets.bin -p mypassword");
 }

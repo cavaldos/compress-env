@@ -22,6 +22,7 @@ fn main() -> std::io::Result<()> {
             // Parse command line options
             let mut output_file = None;
             let mut specific_files = Vec::new();
+            let mut password = None;
             let mut i = 2;
 
             while i < args.len() {
@@ -43,6 +44,16 @@ fn main() -> std::io::Result<()> {
                             i += 1;
                         }
                     },
+                    "-p" => {
+                        if i + 1 < args.len() {
+                            password = Some(args[i + 1].as_str());
+                            i += 2;
+                        } else {
+                            eprintln!("Error: -p option requires a password");
+                            print_usage();
+                            return Ok(());
+                        }
+                    },
                     _ => {
                         if args[i].starts_with('-') {
                             eprintln!("Unknown option: {}", args[i]);
@@ -60,24 +71,50 @@ fn main() -> std::io::Result<()> {
                 Some(specific_files)
             };
 
-            compress_env_files(output_file, specific_files_option)?;
+            compress_env_files(output_file, specific_files_option, password)?;
         },
         "restore" => {
             println!("Decoding and restoring .env files from backup...");
 
-            // Check for -i option
+            // Parse command line options
             let mut input_file = None;
+            let mut password = None;
             let mut i = 2;
+
             while i < args.len() {
-                if args[i] == "-i" && i + 1 < args.len() {
-                    input_file = Some(args[i + 1].as_str());
-                    i += 2;
-                } else {
-                    i += 1;
+                match args[i].as_str() {
+                    "-i" => {
+                        if i + 1 < args.len() {
+                            input_file = Some(args[i + 1].as_str());
+                            i += 2;
+                        } else {
+                            eprintln!("Error: -i option requires a filename");
+                            print_usage();
+                            return Ok(());
+                        }
+                    },
+                    "-p" => {
+                        if i + 1 < args.len() {
+                            password = Some(args[i + 1].as_str());
+                            i += 2;
+                        } else {
+                            eprintln!("Error: -p option requires a password");
+                            print_usage();
+                            return Ok(());
+                        }
+                    },
+                    _ => {
+                        if args[i].starts_with('-') {
+                            eprintln!("Unknown option: {}", args[i]);
+                            print_usage();
+                            return Ok(());
+                        }
+                        i += 1;
+                    }
                 }
             }
 
-            restore_env_files(input_file)?;
+            restore_env_files(input_file, password)?;
         },
         _ => {
             print_usage();

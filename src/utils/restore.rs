@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 use crate::utils::hash::decode::decode_content;
 
 
-pub fn restore_env_files(input_file_name: Option<&str>) -> io::Result<()> {
+pub fn restore_env_files(input_file_name: Option<&str>, password: Option<&str>) -> io::Result<()> {
     let current_dir = std::env::current_dir()?;
     let filename = input_file_name.unwrap_or(crate::DEFAULT_ENV_FILE);
     let input_file_path = current_dir.join(filename);
@@ -17,7 +17,7 @@ pub fn restore_env_files(input_file_name: Option<&str>) -> io::Result<()> {
     file.read_to_end(&mut encoded_data)?;
 
     // Decode the content
-    let decoded_content = match decode_content(&encoded_data) {
+    let decoded_content = match decode_content(&encoded_data, password) {
         Ok(content) => content,
         Err(e) => {
             eprintln!("Error decoding file: {}", e);
