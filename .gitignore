@@ -1,21 +1,4 @@
-# Binaries for programs and plugins
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
 
-# Test binary, built with `go test -c`
-*.test
-
-# Output of the go coverage tool, specifically when used with LiteIDE
-*.out
-
-# Dependency directories (remove the comment below to include it)
-# vendor/
-
-
-# IDE specific files
 .idea/
 .vscode/
 *.swp
@@ -25,6 +8,25 @@
 .DS_Store
 
 .env
+.env.bin
 # Added by cargo
 
 /target
+
+# Rust specific ignores
+**/*.rs.bk
+*.pdb
+Cargo.lock
+!Cargo.toml
+
+# Debug files
+debug/
+**/.cargo-ok
+
+# Local configuration
+.cargo/config.local.toml
+
+# Generated files
+.env.backup
+*.env.*
+/compressed-env-*
