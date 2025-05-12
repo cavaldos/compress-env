@@ -1,6 +1,7 @@
 use std::fs::{self, File};
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
+use crate::utils::hash::encode::encode_content;
 
 
 pub fn compress_env_files(output_file_name: Option<&str>, specific_files: Option<Vec<&str>>) -> io::Result<()> {
@@ -8,10 +9,10 @@ pub fn compress_env_files(output_file_name: Option<&str>, specific_files: Option
     let filename = output_file_name.unwrap_or(crate::DEFAULT_ENV_FILE);
     let output_file_path = current_dir.join(filename);
     let mut output_file = File::create(&output_file_path)?;
-    
+
     // Use a mutable String to collect all content
     let mut aggregated_content = String::new();
-    
+
     match specific_files {
         Some(files) => {
             println!("Compressing specified .env files...");
@@ -30,14 +31,17 @@ pub fn compress_env_files(output_file_name: Option<&str>, specific_files: Option
             find_env_files(&current_dir, &mut aggregated_content)?;
         }
     };
-    
-    // Write the collected content to the output file
-    output_file.write_all(aggregated_content.as_bytes())?;
-    
+
+    // Encode the content before writing to file
+    let encoded_content = encode_content(&aggregated_content);
+
+    // Write the encoded content to the output file
+    output_file.write_all(&encoded_content)?;
+
     if aggregated_content.is_empty() {
         println!("No .env files found in the directory tree.");
     } else {
-        println!("Aggregated .env contents saved to {}", output_file_path.display());
+        println!("Encoded .env contents saved to {}", output_file_path.display());
     }
 
     Ok(())
@@ -49,11 +53,10 @@ pub fn find_env_files(dir: &Path, aggregated_content: &mut String) -> io::Result
         for entry in fs::read_dir(dir)? {
             let entry = entry?;
             let path = entry.path();
-            
+
             if path.is_dir() {
                 find_env_files(&path, aggregated_content)?;
             } else if path.is_file() && path.file_name().map_or(false, |name| name == ".env") {
-                // println!("Found .env file: {}", path.display());
                 process_env_file(&path, aggregated_content)?;
             }
         }
@@ -63,7 +66,6 @@ pub fn find_env_files(dir: &Path, aggregated_content: &mut String) -> io::Result
 
 /// Process a single env file and add its contents to the aggregated content
 pub fn process_env_file(path: &Path, aggregated_content: &mut String) -> io::Result<()> {
-    // println!("Processing file: {}", path.display());
     match File::open(path) {
         Ok(mut file) => {
             let mut contents = String::new();
@@ -72,7 +74,7 @@ pub fn process_env_file(path: &Path, aggregated_content: &mut String) -> io::Res
                     // Get the relative path from the current directory
                     let current_dir = std::env::current_dir()?;
                     let relative_path = path.strip_prefix(&current_dir).unwrap_or(path);
-                    
+
                     aggregated_content.push_str(&format!("--- {} ---\n", relative_path.display()));
                     aggregated_content.push_str(&contents);
                     aggregated_content.push_str("\n\n");
@@ -90,3 +92,5 @@ pub fn process_env_file(path: &Path, aggregated_content: &mut String) -> io::Res
         }
     }
 }
+
+

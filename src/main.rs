@@ -9,7 +9,7 @@ pub const DEFAULT_ENV_FILE: &str = ".env.bin";
 
 fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
-    
+
     if args.len() <= 1 {
         print_usage();
         return Ok(());
@@ -17,13 +17,13 @@ fn main() -> std::io::Result<()> {
 
     match args[1].as_str() {
         "compress" => {
-            println!("Compressing .env files...");
-            
+            println!("Compressing and encoding .env files...");
+
             // Parse command line options
             let mut output_file = None;
             let mut specific_files = Vec::new();
             let mut i = 2;
-            
+
             while i < args.len() {
                 match args[i].as_str() {
                     "-o" => {
@@ -53,18 +53,18 @@ fn main() -> std::io::Result<()> {
                     }
                 }
             }
-            
+
             let specific_files_option = if specific_files.is_empty() {
                 None
             } else {
                 Some(specific_files)
             };
-            
+
             compress_env_files(output_file, specific_files_option)?;
         },
         "restore" => {
-            println!("Restoring .env files from backup...");
-            
+            println!("Decoding and restoring .env files from backup...");
+
             // Check for -i option
             let mut input_file = None;
             let mut i = 2;
@@ -76,13 +76,13 @@ fn main() -> std::io::Result<()> {
                     i += 1;
                 }
             }
-            
+
             restore_env_files(input_file)?;
         },
         _ => {
             print_usage();
         }
     }
-    
+
     Ok(())
 }

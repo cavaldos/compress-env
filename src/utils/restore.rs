@@ -1,30 +1,40 @@
 use std::fs::{self, File};
-use std::io::{self, BufRead, BufReader, Write};
+use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
+use crate::utils::hash::decode::decode_content;
 
 
 pub fn restore_env_files(input_file_name: Option<&str>) -> io::Result<()> {
     let current_dir = std::env::current_dir()?;
     let filename = input_file_name.unwrap_or(crate::DEFAULT_ENV_FILE);
     let input_file_path = current_dir.join(filename);
-    
+
     println!("Reading from: {}", input_file_path.display());
-    
-    let file = File::open(&input_file_path)?;
-    let reader = BufReader::new(file);
-    
-    // Biến để theo dõi trạng thái phân tích
+
+    // Read the entire file
+    let mut file = File::open(&input_file_path)?;
+    let mut encoded_data = Vec::new();
+    file.read_to_end(&mut encoded_data)?;
+
+    // Decode the content
+    let decoded_content = match decode_content(&encoded_data) {
+        Ok(content) => content,
+        Err(e) => {
+            eprintln!("Error decoding file: {}", e);
+            return Err(e);
+        }
+    };
+
+    // Process the decoded content
     let mut current_file: Option<PathBuf> = None;
     let mut current_content = String::new();
     let mut restored_files = Vec::new();
-    
-    // Đọc từng dòng của file
-    for line in reader.lines() {
-        let line = line?;
-        
-        // Kiểm tra nếu dòng bắt đầu bằng "--- "
+
+    // Process each line of the decoded content
+    for line in decoded_content.lines() {
+        // Check if line starts with "--- " and ends with " ---"
         if line.starts_with("--- ") && line.ends_with(" ---") {
-            // Lưu file hiện tại trước khi chuyển sang file mới
+            // Save current file before moving to the next one
             if let Some(path) = current_file {
                 if !current_content.is_empty() {
                     write_env_file(&path, &current_content)?;
@@ -32,28 +42,28 @@ pub fn restore_env_files(input_file_name: Option<&str>) -> io::Result<()> {
                     current_content.clear();
                 }
             }
-            
-            // Trích xuất tên file từ dòng
+
+            // Extract file path from the line
             let file_path = line.trim_start_matches("--- ").trim_end_matches(" ---");
             current_file = Some(current_dir.join(file_path));
         } else if current_file.is_some() {
-            // Thêm dòng vào nội dung của file hiện tại
+            // Add line to current file content
             if !line.is_empty() {
-                current_content.push_str(&line);
+                current_content.push_str(line);
                 current_content.push('\n');
             }
         }
     }
-    
-    // Lưu file cuối cùng nếu có
+
+    // Save the last file if any
     if let Some(path) = current_file {
         if !current_content.is_empty() {
             write_env_file(&path, &current_content)?;
             restored_files.push(path);
         }
     }
-    
-    // In thông báo kết quả
+
+    // Print result message
     if restored_files.is_empty() {
         println!("No .env files were restored.");
     } else {
@@ -62,21 +72,23 @@ pub fn restore_env_files(input_file_name: Option<&str>) -> io::Result<()> {
             println!("  - {}", file.display());
         }
     }
-    
+
     Ok(())
 }
 
-/// Hàm viết nội dung vào file .env
+/// Write content to an .env file
 pub fn write_env_file(path: &Path, content: &str) -> io::Result<()> {
-    // Tạo thư mục chứa file nếu chưa tồn tại
+    // Create directory if it doesn't exist
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent)?;
     }
-    
-    // Viết nội dung vào file
+
+    // Write content to file
     println!("Creating .env file: {}", path.display());
     let mut file = File::create(path)?;
     file.write_all(content.as_bytes())?;
-    
+
     Ok(())
 }
+
+
