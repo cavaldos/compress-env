@@ -47,17 +47,13 @@ Whether you're a solo developer or part of a team, compress-env helps you manage
 ```bash
 # Install compress-env
 curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compress-env -o compress-env
-chmod +x compress-env
-sudo mv compress-env /usr/local/bin/
+
 
 # Compress all .env files in your project
-compress-env compress
-
-# Compress with password protection
-compress-env compress -p mySecretPassword
+./compress-env compress
 
 # Restore your .env files
-compress-env restore
+./compress-env restore
 ```
 
 ## Features
@@ -77,9 +73,9 @@ compress-env restore
    **For Linux/macOS:**
    ```bash
    # Download the latest release
-   curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env -o compress-env
+   curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compress-env -o compress-env
 
-   # Or specify a version (replace v0.1.0 with the desired version)
+   # Or specify a version (replace v0.1.1 with the desired version)
    # curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env -o compress-env
    ```
 
@@ -88,8 +84,8 @@ compress-env restore
    # Download the latest release
    curl.exe -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env.exe -o compress-env.exe
 
-   # Or specify a version (replace v0.1.0 with the desired version)
-   # curl.exe -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env.exe -o compress-env.exe
+   # Or specify a version (replace v0.1.1 with the desired version)
+   # curl.exe -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compress-env.exe -o compress-env.exe
    ```
 
 2. Make the binary executable:
