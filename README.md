@@ -10,7 +10,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/cavaldos/compress-env)](https://github.com/cavaldos/compress-env/issues)
 
 <p align="center">
-  <i>A lightweight Rust tool for securely compressing, encoding, and managing .env files in your projects</i>
+  <i>A lightweight Go tool for securely compressing, encoding, and managing .env files in your projects</i>
 </p>
 
 </div>
@@ -45,14 +45,17 @@ Whether you're a solo developer or part of a team, compress-env helps you manage
 ## Quick Start
 
 ```bash
-# Install compress-env
-curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compress-env -o compress-env
+# Install compress-env (picks the right build for your machine)
+os=$(uname -s | tr '[:upper:]' '[:lower:]')                  # linux | darwin
+arch=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')   # amd64 | arm64
+curl -L "https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-${os}-${arch}" -o compress-env
+chmod +x compress-env
 
+# Open the interactive menu (compress / restore / generate keys)
+./compress-env
 
-# Compress all .env files in your project
+# Or use the commands directly
 ./compress-env compress
-
-# Restore your .env files
 ./compress-env restore
 ```
 
@@ -68,24 +71,26 @@ curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compre
 
 ### Option 1: Download and Install Pre-built Binary
 
-1. Download the pre-built binary from the [Release page](https://github.com/cavaldos/compress-env/releases) or use curl:
+1. Download the pre-built binary for your platform from the [Release page](https://github.com/cavaldos/compress-env/releases). Files are named `compress-env-<os>-<arch>` (`linux`, `darwin`, `windows` × `amd64`, `arm64`), and `checksums.txt` lists their SHA-256.
 
    **For Linux/macOS:**
    ```bash
-   # Download the latest release
-   curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compress-env -o compress-env
+os=$(uname -s | tr '[:upper:]' '[:lower:]')                  # linux | darwin
+arch=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')   # amd64 | arm64
+curl -L "https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-${os}-${arch}" -o compress-env
+chmod +x compress-env
 
-   # Or specify a version (replace v0.1.1 with the desired version)
-   # curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env -o compress-env
+   # Or pin a version (replace v0.0.1 with the desired version)
+   # curl -L https://github.com/cavaldos/compress-env/releases/download/v0.0.1/compress-env-${os}-${arch} -o compress-env
    ```
 
    **For Windows (using PowerShell):**
    ```powershell
-   # Download the latest release
-   curl.exe -L https://github.com/cavaldos/compress-env/releases/download/v0.1.0/compress-env.exe -o compress-env.exe
+   # Download the latest release (use arm64 instead of amd64 on ARM machines)
+   curl.exe -L https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-windows-amd64.exe -o compress-env.exe
 
-   # Or specify a version (replace v0.1.1 with the desired version)
-   # curl.exe -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compress-env.exe -o compress-env.exe
+   # Or pin a version (replace v0.0.1 with the desired version)
+   # curl.exe -L https://github.com/cavaldos/compress-env/releases/download/v0.0.1/compress-env-windows-amd64.exe -o compress-env.exe
    ```
 
 2. Make the binary executable:
@@ -135,9 +140,9 @@ curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compre
    cd compress-env
    ```
 
-2. Build the release version:
+2. Build the binary (requires [Go](https://go.dev/dl/) 1.25 or newer):
    ```bash
-   cargo build --release
+   go build -o compress-env .
    ```
 
 3. Move the binary to a directory in your system PATH:
@@ -145,11 +150,11 @@ curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compre
    **For Linux/macOS:**
    ```bash
    # Move to /usr/local/bin (requires sudo)
-   sudo cp target/release/compress-env /usr/local/bin/
+   sudo cp compress-env /usr/local/bin/
 
    # Or move to ~/.local/bin (doesn't require sudo)
    mkdir -p ~/.local/bin
-   cp target/release/compress-env ~/.local/bin/
+   cp compress-env ~/.local/bin/
    ```
 
    **For Windows:**
@@ -158,7 +163,7 @@ curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compre
    mkdir -p $env:USERPROFILE\bin
 
    # Copy the binary
-   copy target\release\compress-env.exe $env:USERPROFILE\bin\
+   copy compress-env.exe $env:USERPROFILE\bin\
 
    # Add to PATH (run in PowerShell as Administrator)
    [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:USERPROFILE\bin", "User")
@@ -199,6 +204,37 @@ curl -L https://github.com/cavaldos/compress-env/releases/download/v0.1.1/compre
 
 ## Usage
 
+### Interactive menu
+
+Run `compress-env` without arguments to get a menu, so you don't have to remember any option:
+
+1. **Compress .env files**
+   - Pick the files to compress in a file tree, like neo-tree. Choose nothing and every `.env` file is compressed.
+
+     | Key | Action |
+     |-----|--------|
+     | `↑` `↓` / `j` `k` | move (`g` / `G` first / last) |
+     | `→` `←` / `l` `h` | open / close a directory (`←` on a file jumps to its directory) |
+     | `enter` | open / close a directory, select a file |
+     | `space` | select a file, or every file of a directory |
+     | `a` | select all / none |
+     | `t` | switch between env files only and all files |
+     | `c` | continue |
+     | `esc` | cancel |
+   - If your choice differs from the default, it is saved to `.compress-env.yaml` and pre-selected the next time:
+     ```yaml
+     files:
+       - .env
+       - services/api/.env
+     ```
+   - Protect the result with either a **password**, or a **public / private key**: the public key encrypts, only the private key can restore.
+2. **Restore .env files** — asks for the file (`tab` completes the path and lists the backups it finds, `shift+tab` goes back), detects how it was protected, and then asks for the password, or the private key (paste it or give the path to the key file).
+3. **Generate a key pair** — writes `compress-env.key` (private) and `compress-env.key.pub` (public) to the current directory. Keep the private key secret; it is git-ignored by default.
+
+Public / private keys use [age](https://github.com/FiloSottile/age) (X25519), so keys made with `age-keygen` work too. Files protected this way can only be restored from the menu.
+
+### Command line
+
 ```bash
 Usage: compress-env [COMMAND] [OPTIONS]
 Commands:
@@ -238,7 +274,7 @@ compress-env restore -i secrets.bin -p mypassword
 
 1. Searches for all .env files in your current directory and subdirectories (or uses specified files)
 2. Aggregates the contents with path information into a single data structure
-3. Applies encoding (with optional password-based encryption)
+3. Applies encoding (password-based, or encrypted with a public key)
 4. Stores the encoded data in a binary file (default: `.env.bin`)
 
 ### Restoration Process
@@ -287,6 +323,14 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
+
+### Development
+
+```bash
+scripts/test.sh              # gofmt, vet, tests, build (what CI runs)
+scripts/build.sh v0.0.1      # cross-compile into dist/ with checksums
+scripts/release.sh v0.0.1    # tag and push; GitHub Actions publishes the release
+```
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
