@@ -4,22 +4,19 @@ Pack your `.env` files into one protected file, and restore them anywhere.
 
 ## Install
 
-Download the latest build for your OS:
-
-| OS | Intel / AMD | ARM (Apple Silicon, etc.) |
-|----|-------------|---------------------------|
-| macOS | [compress-env-darwin-amd64](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-darwin-amd64) | [compress-env-darwin-arm64](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-darwin-arm64) |
-| Linux | [compress-env-linux-amd64](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-linux-amd64) | [compress-env-linux-arm64](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-linux-arm64) |
-| Windows | [compress-env-windows-amd64.exe](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-windows-amd64.exe) | [compress-env-windows-arm64.exe](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-windows-arm64.exe) |
-
-macOS / Linux: make it executable and put it on your PATH.
+**macOS / Linux**
 
 ```bash
-chmod +x compress-env-*
-sudo mv compress-env-* /usr/local/bin/compress-env
+curl -fsSL https://raw.githubusercontent.com/cavaldos/compress-env/main/scripts/install.sh | sh
 ```
 
-Windows: put the `.exe` in a folder on your PATH.
+**Windows (PowerShell)**
+
+```powershell
+irm https://raw.githubusercontent.com/cavaldos/compress-env/main/scripts/install.ps1 | iex
+```
+
+Install a specific version: `VERSION=v0.0.1` before `sh` (macOS / Linux), or `$env:VERSION='v0.0.1'` before `irm` (Windows).
 
 Or build it yourself (needs Go 1.25+): `go build -o compress-env .`
 
