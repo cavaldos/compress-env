@@ -4,18 +4,24 @@ Pack your `.env` files into one protected file, and restore them anywhere.
 
 ## Install
 
-Download the binary for your machine from the [Releases](https://github.com/cavaldos/compress-env/releases) page, or:
+Download the latest build for your OS:
+
+| OS | Intel / AMD | ARM (Apple Silicon, etc.) |
+|----|-------------|---------------------------|
+| macOS | [compress-env-darwin-amd64](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-darwin-amd64) | [compress-env-darwin-arm64](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-darwin-arm64) |
+| Linux | [compress-env-linux-amd64](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-linux-amd64) | [compress-env-linux-arm64](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-linux-arm64) |
+| Windows | [compress-env-windows-amd64.exe](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-windows-amd64.exe) | [compress-env-windows-arm64.exe](https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-windows-arm64.exe) |
+
+macOS / Linux: make it executable and put it on your PATH.
 
 ```bash
-os=$(uname -s | tr '[:upper:]' '[:lower:]')                  # linux | darwin
-arch=$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')   # amd64 | arm64
-curl -L "https://github.com/cavaldos/compress-env/releases/latest/download/compress-env-${os}-${arch}" -o compress-env
-chmod +x compress-env && sudo mv compress-env /usr/local/bin/
+chmod +x compress-env-*
+sudo mv compress-env-* /usr/local/bin/compress-env
 ```
 
-Windows: download `compress-env-windows-amd64.exe` from the Releases page.
+Windows: put the `.exe` in a folder on your PATH.
 
-Or build it (needs Go 1.25+): `go build -o compress-env .`
+Or build it yourself (needs Go 1.25+): `go build -o compress-env .`
 
 ## Use
 
