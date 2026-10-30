@@ -37,16 +37,18 @@ func Apply(dir, decoded string) ([]string, error) {
 		restored    []string
 	)
 
-	// flush writes the file collected so far, if it has any content.
+	// flush writes the file collected so far, if it has any content. Blank
+	// lines inside a file are kept; the ones compress adds after it are not.
 	flush := func() error {
-		if currentFile == "" || content.Len() == 0 {
+		text := strings.TrimRight(content.String(), "\n")
+		content.Reset()
+		if currentFile == "" || text == "" {
 			return nil
 		}
-		if err := writeEnvFile(currentFile, content.String()); err != nil {
+		if err := writeEnvFile(currentFile, text+"\n"); err != nil {
 			return err
 		}
 		restored = append(restored, currentFile)
-		content.Reset()
 		return nil
 	}
 
@@ -65,7 +67,7 @@ func Apply(dir, decoded string) ([]string, error) {
 				path = strings.TrimSuffix(path, " ---")
 			}
 			currentFile = filepath.Join(dir, path)
-		} else if currentFile != "" && line != "" {
+		} else if currentFile != "" {
 			content.WriteString(line)
 			content.WriteByte('\n')
 		}

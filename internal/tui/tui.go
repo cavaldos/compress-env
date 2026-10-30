@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	privateKeyFile = "compress-env.key"
+	privateKeyFile = config.PrivateKeyFile
 	publicKeyFile  = "compress-env.key.pub"
 )
 
@@ -613,12 +613,15 @@ func (m model) viewPicker() string {
 	var b strings.Builder
 	p := m.picker
 
-	view := "env files only"
+	view, fallback := "env files", "all .env files"
+	if p.ignored != nil {
+		view, fallback = "env + ignored files", ".env + ignored files"
+	}
 	if p.showAll {
 		view = "all files"
 	}
 	b.WriteString("Choose the files to compress\n")
-	b.WriteString(dimStyle.Render(fmt.Sprintf("Showing %s · %d selected · nothing selected = all .env files", view, len(p.selection()))) + "\n\n")
+	b.WriteString(dimStyle.Render(fmt.Sprintf("Showing %s · %d selected · none = %s", view, len(p.selection()), fallback)) + "\n\n")
 	b.WriteString(dirStyle.Render(displayPath(m.dir)) + "\n")
 
 	if len(p.rows) == 0 {
@@ -632,7 +635,7 @@ func (m model) viewPicker() string {
 	}
 
 	b.WriteString("\n" + dimStyle.Render("↑/↓ move · ←/→ close/open · space select · enter open/select"))
-	b.WriteString("\n" + dimStyle.Render("a all · t env/all files · c continue · esc cancel"))
+	b.WriteString("\n" + dimStyle.Render("a all · t short/full list · c continue · esc cancel"))
 	return b.String()
 }
 

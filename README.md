@@ -84,7 +84,11 @@ Move with `↑`/`↓` (or `j`/`k`), confirm with `enter`, go back with `esc`, qu
 
 ### Compress
 
-**1. Choose the files.** The tree shows every env-like file (`.env`, `.env.local`, `prod.env`, ...) under the current folder. `.git`, `node_modules`, `.venv`, ... are skipped.
+**1. Choose the files.** In a git repository, **every file git ignores is ticked**: `.env*`, keys, service account JSON, local overrides... the files that are not in the repo and that a new clone is missing. Outside git, only `.env` files are ticked.
+
+- Folders ignored as a whole (`dist/`, `.next/`, `build/`...) stay closed and unticked, except the env files inside them.
+- Binary files, files over 1 MB, `compress-env.key` and `*.bin` are never ticked. You can still tick them yourself.
+- `.git`, `node_modules`, `.venv`, ... are skipped.
 
 ![Choose the files to compress](docs/images/02-picker.svg)
 
@@ -94,19 +98,19 @@ Move with `↑`/`↓` (or `j`/`k`), confirm with `enter`, go back with `esc`, qu
 | `←` `→`         | Close / open a folder                    |
 | `space` or `x`  | Select / unselect (a folder selects all inside) |
 | `a`             | Select / unselect everything             |
-| `t`             | Show env files only / all files          |
+| `t`             | Short list (env + ignored files) / every file |
 | `c`             | Continue                                 |
 | `esc`           | Back to the menu                         |
 
-Selecting nothing compresses every file named `.env`. Your choice is saved to `.compress-env.yaml`, so it is ticked again next time:
+Selecting nothing uses the default (the ticked files above). If you change the selection, it is saved to `.compress-env.yaml` and ticked again next time:
 
 ```yaml
 files:
   - .env
   - backend/.env
-  - backend/.env.production
-  - frontend/.env
-  - services/payment/.env
+  - backend/certs/server.key
+  - backend/firebase-admin.json
+  - frontend/.env.local
 ```
 
 **2. Choose how to protect them.**

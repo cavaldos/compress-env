@@ -30,7 +30,9 @@ type picker struct {
 	all      []string // every file, sorted
 	selected map[string]bool
 	base     []string // what the selection is compared with: the saved config, or the default
-	showAll  bool     // false: only env-like files
+	defaults []string // compressed when nothing is selected
+	ignored  *config.Ignored
+	showAll  bool // false: only env-like and git-ignored files
 	expanded map[string]bool
 	rows     []row
 	cursor   int
@@ -48,6 +50,9 @@ func newPicker(dir string) (picker, error) {
 		return picker{}, err
 	}
 
+	ignored := config.LoadIgnored(dir)
+	defaults := config.DefaultFiles(dir, candidates, ignored)
+
 	var base []string
 	if hasConfig {
 		for _, f := range saved {
@@ -56,10 +61,10 @@ func newPicker(dir string) (picker, error) {
 			}
 		}
 	} else {
-		base = defaultFiles(candidates)
+		base = defaults
 	}
 
-	p := picker{selected: map[string]bool{}, base: base}
+	p := picker{selected: map[string]bool{}, base: base, defaults: defaults, ignored: ignored}
 	known := map[string]bool{}
 	for _, f := range candidates {
 		known[f] = true
@@ -77,16 +82,6 @@ func newPicker(dir string) (picker, error) {
 	p.resetExpansion()
 	p.rebuild()
 	return p, nil
-}
-
-func defaultFiles(candidates []string) []string {
-	var files []string
-	for _, f := range candidates {
-		if config.IsDefault(f) {
-			files = append(files, f)
-		}
-	}
-	return files
 }
 
 func buildTree(files []string) *node {
@@ -133,7 +128,8 @@ func buildTree(files []string) *node {
 // directory when anything inside it is.
 func (p *picker) isVisible(n *node) bool {
 	if !n.isDir {
-		return p.showAll || config.IsEnvLike(n.path) || p.selected[n.path]
+		return p.showAll || p.selected[n.path] || config.IsEnvLike(n.path) ||
+			p.ignored.File(n.path) || p.ignored.InDir(n.path)
 	}
 	for _, c := range n.children {
 		if p.isVisible(c) {
@@ -143,8 +139,10 @@ func (p *picker) isVisible(n *node) bool {
 	return false
 }
 
-// resetExpansion opens every directory when only env files are shown, and just
-// the ones holding a selected file when browsing all files.
+// resetExpansion opens every directory when only env and ignored files are
+// shown, and just the ones holding a selected file when browsing all files.
+// Directories git ignores as a whole (dist/, .next/, ...) stay closed unless
+// they hold a selected file.
 func (p *picker) resetExpansion() {
 	p.expanded = map[string]bool{}
 	var visit func(n *node) bool // reports whether n holds a selected file
@@ -158,7 +156,8 @@ func (p *picker) resetExpansion() {
 			}
 		}
 		if n.isDir && n.path != "" {
-			p.expanded[n.path] = has || (!p.showAll && p.isVisible(n))
+			whole := p.ignored.InDir(n.path + string(filepath.Separator))
+			p.expanded[n.path] = has || (!p.showAll && !whole && p.isVisible(n))
 		}
 		return has
 	}
@@ -346,11 +345,11 @@ func (p *picker) toggleView() {
 }
 
 // outcome decides what to compress and whether the choice should be saved.
-// Choosing nothing falls back to the default .env files and saves nothing.
+// Choosing nothing falls back to the default files and saves nothing.
 func (p *picker) outcome() (files []string, save bool) {
 	files = p.selection()
 	if len(files) == 0 {
-		return defaultFiles(p.all), false
+		return p.defaults, false
 	}
 	return files, !equal(files, p.base)
 }
