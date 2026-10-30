@@ -1,0 +1,8 @@
+# Keep LF line endings on every OS (gofmt fails on CRLF, e.g. on Windows CI).
+* text=auto eol=lf
+
+# Windows-only scripts
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+*.png binary
