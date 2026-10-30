@@ -109,7 +109,16 @@ GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o compress-env-linux-arm64 .
 
 ## Use your build inside a project
 
-The project install (`install.sh --project`) downloads release binaries. To put your own build in a project instead, point the script at your `dist/` folder. It expects the release layout `<base>/download/<version>/`:
+Copy your binary to the project root under the name `compress-env`:
+
+```bash
+go build -o ~/code/my-app/compress-env .
+cd ~/code/my-app && ./compress-env -v
+```
+
+For another OS / CPU, set `GOOS` / `GOARCH` (see above). On Windows name it `compress-env.exe`.
+
+To test the install script itself against your build, serve `dist/` in the release layout `<base>/download/<version>/`:
 
 ```bash
 scripts/build.sh v0.3.0-dev
@@ -120,8 +129,6 @@ cd ~/code/my-app
 COMPRESS_ENV_BASE_URL=file:///tmp/ce-release VERSION=v0.3.0-dev \
   sh ~/code/compress-env/scripts/install.sh --project
 ```
-
-This also writes the launchers (`bin/compress-env`, `bin/compress-env.cmd`) that pick the right binary for each machine.
 
 ## Tests
 
@@ -186,9 +193,8 @@ Both `scripts/install.sh` and `scripts/install.ps1` read these environment varia
 | Variable                | Meaning                                                    | Default |
 | ----------------------- | ---------------------------------------------------------- | ------- |
 | `VERSION`               | Release to install, e.g. `v0.2.0`                          | latest |
-| `INSTALL_DIR`           | Where to put the binary                                    | machine: `/usr/local/bin` if writable, else `~/.local/bin` (Windows: `%LOCALAPPDATA%\Programs\compress-env`) · project: `bin` |
-| `PROJECT=1`             | Install into the current project (same as `--project`)     | off |
-| `PLATFORMS`             | Project mode: platforms to include, space separated        | all six |
+| `INSTALL_DIR`           | Where to put the binary                                    | machine: `/usr/local/bin` if writable, else `~/.local/bin` (Windows: `%LOCALAPPDATA%\Programs\compress-env`) · project: `.` (current folder) |
+| `PROJECT=1`             | Download into the current folder (same as `--project`)     | off |
 | `COMPRESS_ENV_BASE_URL` | Where releases are downloaded from                         | `https://github.com/cavaldos/compress-env/releases` |
 
 Every download is checked against `checksums.txt`; nothing is installed on a mismatch.
@@ -199,8 +205,8 @@ Examples:
 # a specific version, into ~/bin
 curl -fsSL https://raw.githubusercontent.com/cavaldos/compress-env/main/scripts/install.sh | VERSION=v0.2.0 INSTALL_DIR=~/bin sh
 
-# project mode, macOS Apple Silicon and Windows only, into tools/
-curl -fsSL https://raw.githubusercontent.com/cavaldos/compress-env/main/scripts/install.sh | PLATFORMS="darwin-arm64 windows-amd64" INSTALL_DIR=tools sh -s -- --project
+# project mode, into tools/ (run it as ./tools/compress-env)
+curl -fsSL https://raw.githubusercontent.com/cavaldos/compress-env/main/scripts/install.sh | INSTALL_DIR=tools sh -s -- --project
 ```
 
 ```powershell

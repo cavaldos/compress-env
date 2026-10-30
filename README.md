@@ -5,7 +5,7 @@ Pack all the `.env` files of a project into **one protected file**, commit it, a
 - One file (`.env.bin`) holds every `.env` in the project tree, with its path.
 - Protect it with a **password**, or with a **public key** so only the holder of the private key can restore it.
 - Interactive menu with a file tree picker, or plain commands for scripts and CI.
-- Single binary for macOS, Linux and Windows. Can live **inside your repo**, so teammates need to install nothing.
+- Single binary for macOS, Linux and Windows. Install it on your machine, or drop it into one project as `./compress-env`.
 
 ![Main menu](docs/images/01-menu.svg)
 
@@ -36,9 +36,9 @@ irm https://raw.githubusercontent.com/cavaldos/compress-env/main/scripts/install
 
 Then run `compress-env` from any folder.
 
-### 2. Inside one project (nothing to install for your team)
+### 2. Inside one project (only that project)
 
-Run at the root of the project. The binaries are downloaded into `bin/`; commit that folder and anyone who clones the repo can use it right away, on any OS.
+Run at the root of the project. It downloads one file, `compress-env`, for your machine. Nothing is installed elsewhere.
 
 ```bash
 # macOS / Linux
@@ -50,14 +50,16 @@ curl -fsSL https://raw.githubusercontent.com/cavaldos/compress-env/main/scripts/
 $env:PROJECT='1'; irm https://raw.githubusercontent.com/cavaldos/compress-env/main/scripts/install.ps1 | iex
 ```
 
-```bash
-git add bin && git commit -m "chore: add compress-env"
+Then use it from the project root:
 
-./bin/compress-env      # macOS / Linux / Git Bash
-.\bin\compress-env      # Windows
+```bash
+./compress-env          # macOS / Linux
+.\compress-env          # Windows
 ```
 
-> Pin a version with `VERSION=v0.2.0`, or keep only some platforms with `PLATFORMS="darwin-arm64 linux-amd64"` (each binary is about 4.5 MB). To build it yourself, see [docs/BUILD.md](docs/BUILD.md).
+You can commit it so it is already there after `git clone`. It only runs on the OS / CPU it was downloaded for, so teammates on another system run the command above once.
+
+> Pin a version with `VERSION=v0.2.0`. To build it yourself, see [docs/BUILD.md](docs/BUILD.md).
 
 ## Quick start
 
@@ -207,7 +209,7 @@ Notes:
 | `.env.bin` (or your output) | Yes     |
 | `.compress-env.yaml`        | Yes, so everyone compresses the same files |
 | `compress-env.key.pub`      | Yes     |
-| `bin/` (project install)    | Yes     |
+| `compress-env` (project install) | Optional, if your team uses the same OS |
 | `.env`, `.env.*`            | **No**  |
 | `compress-env.key`          | **No**  |
 
@@ -226,9 +228,9 @@ compress-env.key
 
 **Password or key pair?** A password is simpler for a small team. A key pair is better when many people (or CI) need to update `.env.bin` but only a few should read it.
 
-**`./bin/compress-env: Permission denied`.** The executable bit was lost (e.g. committed from Windows). Run `chmod +x bin/compress-env` or `sh bin/compress-env`, then commit with `git update-index --chmod=+x bin/compress-env`.
+**`./compress-env: Permission denied`.** Run `chmod +x compress-env`. If it is committed, keep the fix with `git update-index --chmod=+x compress-env`.
 
-**`no compress-env binary for <os>/<arch>`.** Your platform was left out with `PLATFORMS`. Run the project install again with it included.
+**`./compress-env: cannot execute binary file` (or `exec format error`).** The file was downloaded for another OS / CPU. Run the project install command again on this machine.
 
 ## License
 
